@@ -3,7 +3,7 @@ import React from 'react'
 function PasswordReset() {
   return (
     <div>
-      PasswordReset
+      Password
     </div>
   )
 }

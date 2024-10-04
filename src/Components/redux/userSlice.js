@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
+
 const initialState = {
     user: JSON.parse(window?.localStorage.getItem("user")) ?? {},
     edit: false,
@@ -15,7 +17,7 @@ const userSlice = createSlice({
         },
         logout(state){
             state.user = null;
-            localstorage?.removeItem('user');
+            window.localstorage?.removeItem('user');
         },
         updateProfile(state, action){
             state.edit = action.payload;
