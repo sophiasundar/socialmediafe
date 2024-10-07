@@ -4,9 +4,9 @@ const TextInput = React.forwardRef(({
     type, placeholder,styles,label, labelStyles, register, name, error
 },ref)=> {
   return (
-    <div className='w-full flex flex-col mt-2'>
+    <div className='w-full flex flex-col mt-1'>
       {
-        label && (<p className={`text-ascent-2 text-sm mb-2 ${labelStyles}`}>{label}</p>)
+        label && (<p className={`text-ascent-2 text-sm mb-1 ${labelStyles}`}>{label}</p>)
       }
       <div>
         <input type={type} name={name} placeholder={placeholder} ref={ref}
@@ -17,7 +17,7 @@ const TextInput = React.forwardRef(({
         />
       </div>
         {error&&(
-            <span className='text-xs text-[#f6494fe] mt-0.5'>{error}</span>
+            <span className='text-xs text-[#ff3535] mt-0.5'>{error}</span>
         )}
     </div>
   )

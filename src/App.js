@@ -30,11 +30,11 @@ function App() {
       <Routes>
       <Route element={<Layout />}>
 
-    <Route path='/' element={<Home  />}></Route>
+    
     <Route path='/profile/:id?' element={<Profile/>}></Route>
 
     </Route>
-
+         <Route path='/' element={<Home  />}></Route>
         <Route path='/register' element={<Register/>}></Route>
         <Route path='/login' element={<Login />}></Route>
         <Route path='/reset-password' element={<PasswordReset/>}></Route>

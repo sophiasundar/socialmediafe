@@ -17,13 +17,18 @@ function Login() {
   const [errMsg,setErrMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
  const dispatch = useDispatch();
+    
+   const  onSubmit = async(data)=>{
+       
+   }
+
   return (
     <div className='bg-bgColor w-full h-[100vh] flex items-center justify-center p-6'>
       <div className='w-full md:w-2/3 h-fit lg:h-full 2xl:h-5/6 py-8 lg:py-0 flex bg-primary
       rounded-xl overflow-hidden shadow-xl'>
         {/* col  1 */}
         <div className='w-full lg:w-1/2 h-full p-10 2xl:px-20 flex flex-col jusitify-center'>
-           <div className='w-full flex gap-2 items-center mb-6'> 
+           <div className='w-full flex gap-2 items-center mb-1'> 
              <div className='p-2 bg-[#982286] rounded text-white'>
              <RiKakaoTalkLine />
              </div>
@@ -33,10 +38,8 @@ function Login() {
             </div>
             <p className='text-ascent-1 text-base font-semibold'>
               Log into your account</p>
-              <span className='text-ascent-2 text-sm  '>
-                welcome back
-              </span>
-              <form className='py-8 flex flex-col gap-5'>
+              
+              <form className='py-8 flex flex-col gap-5' onSubmit={handleSubmit(onSubmit)}>
                 <TextInput name="email" placeholder='Enter your email ' label='Email Address' 
                 type='email' register={register('email',
                   {
@@ -55,7 +58,7 @@ function Login() {
                 )}
                 styles='w-full rounded-full'
                 labelStyle='ml-2'
-                error={errors.password ? errors.email.message : ""}
+                error={errors.password ? errors.password.message : ""}
                 />
 
                 <Link
@@ -67,7 +70,7 @@ function Login() {
                     {
                       errMsg?.message && (
                         <span className={`text-sm ${
-                          errMsg?.status === 'failed' ? "text-[#f64949fe]" : "text-[#2ba150fe]"
+                          errMsg?.status == 'failed' ? "text-[#f64949fe]" : "text-[#2ba150fe]"
                         } mt-0.5`}>
                           {errMsg?.message }
                         </span>
@@ -81,7 +84,7 @@ function Login() {
                         title='login'
                         />
                     }
-                     <p className='text-ascent-2 text-sm text-center mb-4'>
+                     <p className='text-ascent-2 text-sm text-center mt-0'>
                  Don't have an account?
                  <Link
                  to='/register'
@@ -122,7 +125,7 @@ function Login() {
 
             </div>
 
-
+            
 
         </div>
       </div>
