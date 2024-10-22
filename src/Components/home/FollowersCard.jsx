@@ -1,5 +1,6 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import ProfilePic from '../../assets/ProfilePic.png';
 
 const FollowersCard=({followers}) =>{
   return (
@@ -16,7 +17,7 @@ const FollowersCard=({followers}) =>{
                         key={follower?._id}
                         className='w-full flex gap-4 items-center cursor-pointer'
                     >
-                      <img src={follower?.profileUrl ?? "NoProfile"} alt={follower?.firstName}
+                      <img src={follower?.profileUrl ?? ProfilePic} alt={follower?.firstName}
                           className='w-10 h-10 object-cover rounded-full'
                       />
                       <div className='flex-1 '>

@@ -5,10 +5,12 @@ const scrollSlice = createSlice({
     name: 'scroll',
     initialState: {
         scrollY: 0,
+        scrollX: 0,
     },
     reducers: {
         updateScrollPosition: ( state, action ) =>{
-            state.scrollY = action.payload;
+            state.scrollY = action.payload.scrollY;
+              state.scrollX = action.payload.scrollX;
         },
     },
 });

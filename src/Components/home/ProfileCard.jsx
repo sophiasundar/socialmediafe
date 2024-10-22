@@ -11,7 +11,8 @@ import moment from 'moment';
 const ProfileCard=({user})=> {
     const { user: data, edit } = useSelector((state)=>state.user);
     const dispatch = useDispatch();
-
+    const createdAtDate = moment(user?.createdAt);
+  const formattedDateTime = createdAtDate.format('YYYY-MM-DD HH:mm:ss');
 
   return (
     <div>
@@ -83,7 +84,8 @@ const ProfileCard=({user})=> {
                   Joined
                 </span>
                 <span className='text-ascent-2 text-base'>
-                  {moment(user?.createdAt?.fromNow()).toString()}
+                        {formattedDateTime}
+
                 </span>
               </div>
             </div>
