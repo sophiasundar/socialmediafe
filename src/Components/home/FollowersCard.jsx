@@ -1,3 +1,5 @@
+// Followers who are following profile
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ProfilePic from '../../assets/ProfilePic.png';

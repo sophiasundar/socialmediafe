@@ -1,3 +1,5 @@
+// Topbar navbar
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,13 +11,55 @@ import { FaMoon } from "react-icons/fa";
 import { IoSunnySharp } from "react-icons/io5";
 import { IoMdNotifications } from "react-icons/io";
 import { setTheme } from '../redux/theme';
-import { Logout } from '../redux/userSlice';
+import { Logout } from '../redux/userSlice.js';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const TopBar = () => {
   const { register, handleSubmit, formState:{errors}} = useForm({mode:"onChange"});
   const { theme } = useSelector(state=> state.theme);
   const { user } = useSelector(state=> state.user);
    const dispatch = useDispatch();
+   const navigate = useNavigate();
+ 
+    
+   const handleLogout = async () => {
+      try {
+        // Dispatch the logout action (this should update the Redux state)
+        dispatch(Logout());
+    
+        // Wait a bit to allow the Redux state to update
+        // This can be adjusted or replaced with a more suitable state monitoring
+        setTimeout(() => {
+          // Show a success toast after state has updated
+          toast.success("You have been logged out successfully!", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+    
+          // Redirect to the login page (or any page you want)
+          navigate('/login');
+        }, 500);  // Adjust the delay based on your needs
+    
+      } catch (err) {
+        // Handle any error that might occur
+        toast.error("Logout failed! Please try again.", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    };
+    
   
    const handleTheme = async(data)=>{
       const themeValue = theme === 'light' ? 'dark' : 'light';
@@ -28,6 +72,7 @@ const handleSearch = async(data)=>{
 
   
 }
+
   return (
     <div className='topbar w-full flex items-center justify-between py-3  md:py-6 px-4 bg-primary  ' >
            <Link to='/' className='flex gap-2 items-center '>
@@ -63,10 +108,11 @@ const handleSearch = async(data)=>{
            </div>
 
            <CustomButton 
-             onClick={()=> dispatch(Logout())}
+            onClick={handleLogout}
                title='Log Out'
                containerStyles= 'bg-[#0444a4] text-white text-ascent-1 text-sm px-4 md:px-6 py-2 md:py-2 border border-[#666] rounded-full'
            />
+            <ToastContainer />
     </div>
   )
 }

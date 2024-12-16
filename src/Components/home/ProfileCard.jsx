@@ -1,5 +1,7 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+// profile card for own
+
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ProfilePic from '../../assets/ProfilePic.png';
 import { FaRegEdit } from "react-icons/fa";
@@ -9,7 +11,7 @@ import { CiLocationOn } from "react-icons/ci";
 import moment from 'moment';
 
 const ProfileCard=({user})=> {
-    const { user: data, edit } = useSelector((state)=>state.user);
+    const { user: data } = useSelector((state)=>state.user);
     const dispatch = useDispatch();
     const createdAtDate = moment(user?.createdAt);
   const formattedDateTime = createdAtDate.format('YYYY-MM-DD HH:mm:ss');

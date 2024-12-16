@@ -1,33 +1,106 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RiKakaoTalkLine } from "react-icons/ri";
 import TextInput from '../form/TextInput';
 import { useForm } from 'react-hook-form';
+import { useSelector } from "react-redux";
+import { registerUser,  clearMessages } from "../redux/userSlice";
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import CustomButton from '../form/CustomButton';
 import Loading from '../form/Loading';
-import TalkPulse from '../../assets/TalkPulse.jpg';
-import { BsShare } from "react-icons/bs";
-import { ImConnection } from "react-icons/im";
-import { AiOutlineInteraction } from "react-icons/ai";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function Register() {
   const { register, handleSubmit, getValues, formState:{errors}} = useForm({mode:"onChange"});
   const [errMsg,setErrMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
  const dispatch = useDispatch();
+ const { loading, error, successMessage } = useSelector((state) => state.user);
     
    const  onSubmit = async(data)=>{
-       
-   }
+    console.log("Submitted Data:", data);
+
+    try{
+    dispatch(registerUser(data));
+
+    if (successMessage) {
+      toast.success(successMessage, {
+        position: "top-center",
+        autoClose: 9000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    
+  } catch (err) {
+    // Check for specific error
+    if (error?.toLowerCase().includes("email already exists")) {
+      toast.error("Email already exists. Please use a different one!", {
+        position: "top-center",
+        autoClose: 9000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } else {
+      toast.error(error || "Registration failed!", {
+        position: "top-center",
+        autoClose: 9000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+   } }
+
+   useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage, {
+        position: "top-center",
+        autoClose: 9000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      dispatch(clearMessages());
+    }
+  
+    if (error) {
+      const errorMsg = error.toLowerCase().includes("email already exists")
+        ? "Email already exists. Please use a different one!"
+        : error;
+  
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      dispatch(clearMessages());
+    }
+  }, [successMessage, error, dispatch]);
+  
 
   return (
-    <div className='bg-bgColor w-full h-[100vh] flex items-center justify-center p-6'>
-      <div className='w-full md:w-2/3 h-fit lg:h-full 2xl:h-5/6 py-8 lg:py-0 flex flex-row-reverse bg-primary
+    <div className='bg-bgColor w-full  flex items-center justify-center p-6 flex-grow overflow-y-auto max-h-full'>
+      <div className='w-full md:w-2/3 h-fit lg:h-full  2xl:h-5/6 py-8 lg:py-0 flex flex-row-reverse bg-primary
       rounded-xl overflow-hidden shadow-xl'>
         {/* col  1 */}
-        <div className='w-full lg:w-1/2 h-full p-10 2xl:px-20 flex flex-col jusitify-center'>
+        <div className='w-full lg:w-full h-full p-10 2xl:px-20 flex flex-col jusitify-center '>
            <div className='w-full flex gap-2 items-center mt-1'> 
              <div className='p-2 bg-[#982286] rounded text-white'>
              <RiKakaoTalkLine />
@@ -39,7 +112,11 @@ function Register() {
             </div>
             <p className='text-ascent-1 text-base font-semibold'>
             Create An Account</p>
-              <form className='py-8 flex flex-col  gap-1 ' onSubmit={handleSubmit(onSubmit)}>
+              <form className='py-8 flex flex-col gap-4 flex-grow ' onSubmit={handleSubmit(onSubmit)}>
+
+
+              {error && <p style={{ color: "red" }}>{error}</p>}
+              {successMessage && <p style={{ color: "red" }}>{successMessage}</p>}
 
               <div  className='w-full flex flex-col lg:flex-row  md:gap-2'>
               <TextInput name="firstName" placeholder='First Name ' label='First Name' 
@@ -98,14 +175,48 @@ function Register() {
                 ? errors.cPassword?.message : ""
                }
                 />
+
+            
+              
                 </div>
 
+                <div className='w-full flex flex-col lg:flex-row md:gap-2'>
+               
+             <TextInput name="location" placeholder='Location ' label='Location' 
+                type='text' register={register('location',
+                  {
+                    required: 'Location is required'
+                  }
+                )}
+                styles='w-full'
+                error={errors.location ? errors.location?.message : ""}
+                />
 
-                {/* <Link
-                   to='/reset-password'
-                   className='text-sm text-right text-blue font-semibold '
-                >
-                    Forgot Password </Link> */}
+             <TextInput name="profession" placeholder='Profession ' label='Profession' 
+                type='text' register={register('profession',
+                  {
+                    required: 'Profession is required'
+                  }
+                )}
+                styles='w-full'
+                error={errors.profession ? errors.profession?.message : ""}
+                />
+
+                </div>
+
+                <div className='w-full'>
+
+              <TextInput name="profileUrl" placeholder='ProfileUrl' label='ProfileUrl' 
+                type='text' register={register('profileUrl',
+                  {
+                    required: 'ProfileUrl is required'
+                  }
+                )}
+                styles='w-full'
+                error={errors.profileUrl ? errors.profileUrl?.message : ""}
+                />
+              
+              </div>
 
                     {
                       errMsg?.message && (
@@ -120,9 +231,10 @@ function Register() {
                     {
                         isSubmitting ? <Loading/> : <CustomButton
                         type='submit'
+                        disabled={loading}
                         containerStyles={`inline-flex justify-center rounded-md bg-blue px-8 py-3 text-sm font-medium text-white outline-none`}
                         title='Sign Up'
-                        />
+                        >{loading ? "Registering..." : "Sign Up"}</CustomButton>
                     }
                      <p className='text-ascent-2 text-sm text-center mb-4'>
                  Already has an account?
@@ -139,36 +251,11 @@ function Register() {
         </div>
 
         {/* col 2 */}
-        <div className='hidden w-1/2 h-full lg:flex flex-col items-center
-           justify-center bg-[#982286]'>
-            <div className='relative w-full flex items-center justify-center'>
-                  <img
-                      src={TalkPulse}
-                      alt='Bg Image'
-                      className='w-50 2-xl:w-64  h-52  2-xl:h-64 rounded-full object-cover'
-                  />
-                  <div className='absolute flex gap-1 items-center bg-white right-5 top-1 py-2 px-2 rounded-full '> 
-                  <BsShare size={14}/>
-                      <span className='text-xs font-medium'>Share</span>
-                  </div>
 
-                  <div className='absolute flex gap-1 items-center bg-white left-1 top-1 py-2 px-2 rounded-full '> 
-                  <ImConnection size={14}/>
-                      <span className='text-xs font-medium'>Connect</span>
-                  </div>
-
-                  <div className='absolute flex gap-1 items-center bg-white left-1 bottom-6 py-2 px-2 rounded-full '> 
-                  <AiOutlineInteraction size={14}/>
-                      <span className='text-xs font-medium'>Interact</span>
-                  </div>
-
-            </div>
-
-            
-
-        </div>
+      
       </div>
-    </div>
+      <ToastContainer/>
+     </div>
   )
 }
 

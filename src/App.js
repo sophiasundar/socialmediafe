@@ -28,11 +28,11 @@ function App() {
   return (
     <div data-theme={theme} className="w-full min-h-[100vh]">
       <Routes>
-      <Route path='/' element={<Home  />}></Route>
-      <Route path='/profile/:id?' element={<Profile/>}></Route>
+    
       <Route element={<Layout />}>
 
-      
+      <Route path='/' element={<Home  />}></Route>
+      <Route path='/profile/:id?' element={<Profile/>}></Route>
     
 
     </Route>

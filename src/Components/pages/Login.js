@@ -1,25 +1,76 @@
 import React from 'react';
 import { useState } from 'react';
+import { useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
 import { RiKakaoTalkLine } from "react-icons/ri";
 import TextInput from '../form/TextInput';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import CustomButton from '../form/CustomButton';
-import Loading from '../form/Loading';
 import TalkPulse from '../../assets/TalkPulse.jpg';
 import { BsShare } from "react-icons/bs";
 import { ImConnection } from "react-icons/im";
 import { AiOutlineInteraction } from "react-icons/ai";
+import { loginUser } from "../redux/userSlice.js";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-function Login() {
+const Login=() =>{
   const { register, handleSubmit, formState:{errors}} = useForm({mode:"onChange"});
   const [errMsg,setErrMsg] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
  const dispatch = useDispatch();
+ const { loading, error, successMessage } = useSelector((state) => state.user);
+ const navigate = useNavigate();
     
    const  onSubmit = async(data)=>{
+        console.log("Submitted Data:", data);
        
+       
+           try{
+          await dispatch(loginUser(data));
+       
+           if (successMessage) {
+             toast.success(successMessage, {
+               position: "top-center",
+               autoClose: 5000,
+               hideProgressBar: false,
+               closeOnClick: true,
+               pauseOnHover: true,
+               draggable: true,
+               progress: undefined,
+             });
+             setTimeout(() => {
+              navigate('/');
+            }, 1000); // Delay the navigation for toast to appear
+          }
+           
+           
+         } catch (err) {
+          const errorMessage = error || "Login failed!";
+           // Check for specific error
+           if (error?.toLowerCase().includes("Invalid email or password")) {
+             toast.error("Please Enter correct Email or Password !", {
+               position: "top-center",
+               autoClose: 5000,
+               hideProgressBar: false,
+               closeOnClick: true,
+               pauseOnHover: true,
+               draggable: true,
+               progress: undefined,
+             });
+           } else {
+             toast.error(errorMessage, {
+               position: "top-center",
+               autoClose: 5000,
+               hideProgressBar: false,
+               closeOnClick: true,
+               pauseOnHover: true,
+               draggable: true,
+               progress: undefined,
+             });
+           }
+          }
    }
 
   return (
@@ -77,13 +128,13 @@ function Login() {
                       )
                     }
 
-                    {
-                        isSubmitting ? <Loading/> : <CustomButton
+                    
+                       <CustomButton
                         type='submit'
                         containerStyles={`inline-flex justify-center rounded-md bg-blue px-8 py-3 text-sm font-medium text-white outline-none`}
                         title='login'
                         />
-                    }
+                    
                      <p className='text-ascent-2 text-sm text-center mt-0'>
                  Don't have an account?
                  <Link
@@ -129,6 +180,7 @@ function Login() {
 
         </div>
       </div>
+      <ToastContainer/>
     </div>
   )
 }
