@@ -43,7 +43,7 @@ const TopBar = () => {
           });
     
           // Redirect to the login page (or any page you want)
-          navigate('/login');
+          navigate('/');
         }, 500);  // Adjust the delay based on your needs
     
       } catch (err) {

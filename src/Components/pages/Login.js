@@ -41,36 +41,37 @@ const Login=() =>{
                progress: undefined,
              });
              setTimeout(() => {
-              navigate('/');
+              navigate('/home');
             }, 1000); // Delay the navigation for toast to appear
           }
            
            
          } catch (err) {
-          const errorMessage = error || "Login failed!";
-           // Check for specific error
-           if (error?.toLowerCase().includes("Invalid email or password")) {
-             toast.error("Please Enter correct Email or Password !", {
-               position: "top-center",
-               autoClose: 5000,
-               hideProgressBar: false,
-               closeOnClick: true,
-               pauseOnHover: true,
-               draggable: true,
-               progress: undefined,
-             });
-           } else {
-             toast.error(errorMessage, {
-               position: "top-center",
-               autoClose: 5000,
-               hideProgressBar: false,
-               closeOnClick: true,
-               pauseOnHover: true,
-               draggable: true,
-               progress: undefined,
-             });
-           }
+          const errorMessage = err?.response?.data?.message || "Login failed!";
+
+          // Check for specific error message
+          if (errorMessage.toLowerCase().includes("invalid email or password")) {
+            toast.error("Please Enter correct Email or Password!", {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
+          } else {
+            toast.error(errorMessage, {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
           }
+        }
    }
 
   return (

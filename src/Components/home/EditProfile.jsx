@@ -1,31 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { MdClose } from "react-icons/md";
 import TextInput from '../form/TextInput';
 import Loading from '../form/Loading';
 import CustomButton from '../form/CustomButton';
-import { updateProfile } from '../redux/userSlice';
+import { updateUserProfile, updateProfile, fetchUserProfile } from '../redux/userSlice.js';
 
 const EditProfile=() =>{
-    const { user } = useSelector((state) => state.user);
-    const dispatch = useDispatch();
-    const [errMsg, setErrMsg] =useState("");
-    const [ isSubmitting, setIsSubmitting ] = useState(false);
-    const [picture, setPicture] = useState(null);
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [errMsg, setErrMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [picture, setPicture] = useState(null);
 
-    const {register,handleSubmit, formState: {errors},} = useForm({ mode: "onChange", defaultValuse: {...user}});
-    const onSubmit = async(data) => {
-         
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    mode: "onChange",
+    defaultValues: { ...user }, // Ensure form is initialized with user data
+  });
+
+   // UseEffect to watch for changes in user and reset form if needed
+   useEffect(() => {
+    // Reset form values to match user data if user data is updated
+    if (user) {
+      reset({ ...user });
+    }
+  }, [user, reset]);
+
+  const onSubmit = async (data) => {
+    if (!user) {
+      setErrMsg("User not found!");
+      return;
     }
 
-    const handleClose = () => {
-         dispatch(updateProfile(false));
+    setIsSubmitting(true);
+    const formData = { ...data, userId: user.userId };
+
+    if (picture) {
+      formData.picture = picture;
     }
 
-    const handleSelect = (e) => {
-        setPicture(e.target.files[0]);
+    try {
+      await dispatch(updateUserProfile(formData)).unwrap();
+      await dispatch(fetchUserProfile());
+      setErrMsg({ message: "Profile updated successfully!", status: "success" });
+      // Optionally reset the form with updated data after successful submission 
+      reset({ ...formData });
+    } catch (error) {
+      setErrMsg({ message: error || "Failed to update profile", status: "failed" });
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleClose = () => {
+    dispatch(updateProfile(false)); // Close the modal
+  };
+
+  const handleSelect = (e) => {
+    setPicture(e.target.files[0]);
+  };
 
   return (
     
@@ -76,7 +111,7 @@ const EditProfile=() =>{
                                 />
 
                                 <TextInput name="profession" placeholder='profession ' label='Profession' 
-                                type='text' register={register('Profession',
+                                type='text' register={register('profession',
                                 {
                                     required: 'Profession is required'
                                 }
@@ -96,7 +131,7 @@ const EditProfile=() =>{
                                 />
                                
                                <label className='flex items-center gap-1 text-base text-ascent-2 hover:text=ascent-1 cursor-pointer my-4'
-                               >
+                               >  
                                 <input className=''
                                   type='file'
                                   id='imgUpload'
