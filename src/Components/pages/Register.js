@@ -239,7 +239,7 @@ function Register() {
                      <p className='text-ascent-2 text-sm text-center mb-4'>
                  Already has an account?
                  <Link
-                 to='/login'
+                 to='/'
                  className='text-[#065ad8] font-semibold ml-2  cursor-pointer'
                  >
                      Login

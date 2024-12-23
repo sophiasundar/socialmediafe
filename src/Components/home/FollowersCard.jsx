@@ -1,43 +1,29 @@
-// Followers who are following profile
+import React from "react";
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import ProfilePic from '../../assets/ProfilePic.png';
 
-const FollowersCard=({followers}) =>{
+const FollowerCard = ({ follower }) => {
+    console.log('Follower:',follower)
   return (
-    <div>
-      <div className='w-full bg-primary shadow-sm rounded-lg px-6 py-5'>
-         <div className='flex items-center justify-between text-ascent-1 pb-2 border-b border-[#66666645] '>
-            <span> Followers </span>
-            <span> {followers?.length} </span>
-            </div>
-            
-            <div className='w-full flex flex-col gap-4 pt-4'>
-                {followers?.map((follower)=>(
-                    <Link to={'/profile/'+follower?._id}
-                        key={follower?._id}
-                        className='w-full flex gap-4 items-center cursor-pointer'
-                    >
-                      <img src={follower?.profileUrl ?? ProfilePic} alt={follower?.firstName}
-                          className='w-10 h-10 object-cover rounded-full'
-                      />
-                      <div className='flex-1 '>
-                        <p className='text-base font-medium text-ascent-1'>
-                           {follower?.firstName} {follower?.lastName}
-                        </p>
-                        <span className='text-sm text-ascent-2'>
-                            {follower?.profession ?? "No Profession"}
-                        </span>
-                      </div>
-                        
-                    </Link>
-                ))}
-            </div>
-        
+    <div className="flex items-center space-x-4 p-4 border-b border-gray-200">
+      <img
+        src={follower.profileUrl }
+        alt={`${follower.firstName} ${follower.lastName}`}
+        className="w-12 h-12 rounded-full"
+      />
+      <div>
+        <p
+          
+          className="font-semibold text-ascent-1 hover:text-blue-600"
+        >
+          {follower.firstName} {follower.lastName}
+        </p>
+        <p className="text-sm text-gray-500">{follower.profession}</p>
+        <p className="text-xs text-gray-400">
+          Followed on {new Date(follower.followedAt).toLocaleDateString()}
+        </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FollowersCard
+export default FollowerCard;

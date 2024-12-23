@@ -1,5 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
+// import { useEffect } from 'react';
 import './App.css';
+// import axios from 'axios';
+// import { API } from './Components/global';
 import Register from './Components/pages/Register';
 import Login from './Components/pages/Login';
 import PasswordReset from './Components/pages/PasswordReset';
@@ -7,9 +10,15 @@ import Profile from './Components/pages/Profile';
 import Home from './Components/pages/Home';
 import { useSelector } from 'react-redux';
 import ProtectedRoute from './Components/protectedRoute/protectedRoute';
+import ExploreUsers from './Components/pages/ExploreUser';
+
+
 
 const App = () =>{
   const {theme} = useSelector((state)=>state.theme);
+  
+  
+
 
   return (
     <div data-theme={theme} className="w-full min-h-[100vh]">
@@ -30,7 +39,16 @@ const App = () =>{
         </ProtectedRoute>
           }></Route>
     
+    <Route path='/explore-people' element={
+       
+        <ExploreUsers />
+        
+          }></Route>
+
+
       </Routes>
+
+      
     </div>
   );
 }

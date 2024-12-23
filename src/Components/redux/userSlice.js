@@ -33,7 +33,7 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// Async thunk for logging in a user
+// Async thunk for logging in a user   ${API}/api/users/login`
 export const loginUser = createAsyncThunk(
   "users/login",
   async (userData, { rejectWithValue }) => {
@@ -110,15 +110,47 @@ export const updateUserProfile = createAsyncThunk(
   }
 );
 
+// Async thunk for fetching followers and following
+export const fetchFollowersAndFollowing = createAsyncThunk(
+  "user/fetchFollowersAndFollowing",
+  async (_, { rejectWithValue, getState }) => {
+    const state = getState();
+    const token = state.user?.token || localStorage.getItem("token"); // Fallback to localStorage
+
+    if (!token) {
+      return rejectWithValue("Token is missing");
+    }
+
+    try {
+      const response = await axios.get(`${API}/api/users/followers-following`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+
+
 
 // Initial state
 const initialState = {
-  user: null,
-   profile: null,
+  followerRequests: [],
+  user: {
+    userId: null,
+      
+  },
+  profile: null,
+  followers: [],  
+  following: [],
   loading: false,
   error: null,
   successMessage : null,
   isEditingProfile: false,
+
 };
 
 // Redux slice
@@ -132,6 +164,10 @@ const userSlice = createSlice({
 
     setUser: (state, action) => {
       state.user = action.payload;
+    },
+
+    clearUser: (state) => {
+      state.user = null;
     },
 
     clearMessages(state) {
@@ -177,8 +213,12 @@ const userSlice = createSlice({
         state.successMessage = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        const decodedToken = jwtDecode(action.payload.token);
         state.loading = false;
-        state.user = jwtDecode(action.payload.token);  // Decode token to get user
+        state.user = {
+          userId: decodedToken.userId,  // Extract and store userId
+          email: decodedToken.email,   // Add additional fields if needed
+        };
         state.successMessage = "Login successful!";
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -190,7 +230,11 @@ const userSlice = createSlice({
       })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.profile = action.payload;  // Store the fetched profile
+        state.profile = action.payload;
+        state.user = {
+          ...state.user,
+          userId: action.payload._id,  // Ensure userId is stored
+        };
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
@@ -212,11 +256,25 @@ const userSlice = createSlice({
        .addCase(updateUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to update profile";
+      })
+           // for fetching followers and following
+      .addCase(fetchFollowersAndFollowing.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchFollowersAndFollowing.fulfilled, (state, action) => {
+        state.loading = false;
+        state.followers = action.payload.followers; // Store followers
+        state.following = action.payload.following; // Store following
+      })
+      .addCase(fetchFollowersAndFollowing.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch followers/following";
       });
     
   },
 });
 
-export const { setUser, Logout, updateProfile, clearMessages } = userSlice.actions;
+export const { setUser, clearUser, Logout, updateProfile, clearMessages } = userSlice.actions;
 
 export default userSlice.reducer;

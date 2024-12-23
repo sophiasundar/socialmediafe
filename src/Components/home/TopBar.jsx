@@ -75,7 +75,7 @@ const handleSearch = async(data)=>{
 
   return (
     <div className='topbar w-full flex items-center justify-between py-3  md:py-6 px-4 bg-primary  ' >
-           <Link to='/' className='flex gap-2 items-center '>
+           <Link to='/home' className='flex gap-2 items-center '>
            <div className='p-1 md:p-2 bg-[#982286] rounded text-white'>
              <RiKakaoTalkLine />
              </div>
@@ -84,13 +84,20 @@ const handleSearch = async(data)=>{
              </span>
            </Link>
 
+           <button
+                onClick={() => navigate('/explore-people')}
+                className='hidden md:flex bg-[#0444a4] text-white px-4 py-2 rounded-full mr-4'
+              >
+                Explore People
+              </button>
+
            <form className='hidden md:flex items-center justify-center' onSubmit={handleSubmit(handleSearch)}>
 
-            <TextInput
-               placeholder = 'Search '
-               styles = 'w-[18rem] lg:w-[38rem] rounded-1-full py-3'
-               register={register('search')}
-            />
+                <TextInput
+                placeholder='Search'
+                styles='w-[12rem] lg:w-[24rem] rounded-l-full py-2'
+                register={register('search')}
+              />
 
             <CustomButton
                title='Search'
