@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch  } from 'react-redux';
-import { followers, suggest, posts } from '../../assets/data.js';
+import { fetchPosts } from '../redux/postSlice.js';
 import TopBar from '../home/TopBar';
 import ProfileCard from '../home/ProfileCard';
 import ProfilePic from '../../assets/ProfilePic.png';
@@ -21,18 +21,20 @@ import FollowerFollowing from '../home/FollowerFollowing.jsx';
 
 function Home() {
     const { user, edit } = useSelector((state)=> state.user);
-    const [ followerRequest, setFollowerRequest ] = useState(followers);
-    const [ suggestions, setSuggestions ] = useState(suggest)
+    const { posts, loading, error } = useSelector((state) => state.posts);
     const [file, setFile] = useState(null);
     const [posting, setPosting] = useState(false)
-    const [loading, setLoading] = useState(false)
-
     const { register, handleSubmit,   formState:{errors}} = useForm({mode:"onChange"});
     const [errMsg,setErrMsg] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
      
 
     const dispatch = useDispatch();
+
+     // Fetch posts when the component mounts
+      useEffect(() => {
+        dispatch(fetchPosts());
+      }, [dispatch]);
     
     const handlePostSubmit = async(data)=> {
       
@@ -150,13 +152,9 @@ function Home() {
 
                 {/* Postcard */}
               { loading ? (<Loading/>): posts?.length > 0 ? (
-                posts?.map((post)=>(
-                  <PostCard  key={post?._id} post={post} 
-                      user={user}
-                      deletePost={()=>{}}
-                      likePost = {()=>{}}
-                  />
-                ))
+                
+                  <PostCard  />
+                
               ) :(
                   <div className='flex w-full items-center justify-center'>
                   <p className='text-lg text-ascent-2'> No Post Available</p>

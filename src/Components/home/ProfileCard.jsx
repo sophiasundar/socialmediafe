@@ -12,14 +12,18 @@ import moment from 'moment';
 
 const ProfileCard=()=> {
   
-    const { loading, error } = useSelector((state)=>state.user);
+  const { user, loading, error } = useSelector((state) => state.user);
+  const { posts } = useSelector((state) => state.posts);
+  
     const dispatch = useDispatch();
-    const currentUser = useSelector((state) => state.user.user); 
+     // Count posts for the current user
+    const userPostsCount = posts?.filter((post) => post?.userId?._id === user?.userId)?.length || 0;
     const profile = useSelector((state) => state.user.profile);
+     
     console.log("Profile ID:", profile?._id);
-    console.log("Current User:", currentUser);
+    console.log("Current User:", user);
     
-    console.log("Current User ID:", currentUser?.userId);
+    console.log("Current User ID:", user?.userId);
     const { isEditingProfile } = useSelector((state) => state.user);
 
        console.log(isEditingProfile);
@@ -60,8 +64,8 @@ const ProfileCard=()=> {
 
         <div className=''>
 
-                        {profile?._id && currentUser?.userId ? (
-                  profile._id === currentUser.userId ? (
+                        {profile?._id && user?.userId ? (
+                  profile._id === user.userId ? (
                     <FaRegEdit
                       size={22}
                       className="text-blue cursor-pointer"
@@ -105,16 +109,18 @@ const ProfileCard=()=> {
                      {profile?.followers?.length} Followers
                 </p>
 
+                <p className='text-xl text-ascent-1 font-semibold'>
+                     {profile?.following?.length} Following
+                </p>
+
                 <div className='flex items-center justify-between'>
                    <span className='text-ascent-2'>
-                      Who viewed your profile
+                      Posts
                    </span>
-                   <span className='text-ascent-1 text-lg'>{profile?.views?.length}</span>
+                   <span className='text-ascent-1 text-lg'>{userPostsCount}</span>
                 </div>
                   
-                  <span className='text-base text-blue'>
-                        {profile?.verified ? "verified Account" : "Not Verified"}
-                  </span>
+                 
 
               <div className='flex items-center justify-between'>
                 <span className='text-ascent-2'>

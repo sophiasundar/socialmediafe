@@ -6,7 +6,7 @@ import FollowingCard from "./FollowingCard";
 
 const FollowersAndFollowingList = () => {
   const dispatch = useDispatch();
-  const { followers, following, loading, error } = useSelector((state) => state.user);
+  const { followers = [], following = [], loading, error } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(fetchFollowersAndFollowing());

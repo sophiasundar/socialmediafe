@@ -36,7 +36,7 @@ export const registerUser = createAsyncThunk(
 // Async thunk for logging in a user   ${API}/api/users/login`
 export const loginUser = createAsyncThunk(
   "users/login",
-  async (userData, { rejectWithValue }) => {
+  async (userData, { dispatch, rejectWithValue }) => {
     try {
       const response = await axios.post(`${API}/api/users/login`, userData, {
         headers: {
@@ -47,6 +47,10 @@ export const loginUser = createAsyncThunk(
       const data = response.data;
       localStorage.setItem("user", JSON.stringify(data));  // Store user data
       localStorage.setItem("token", data.token);  // Store token separately
+      
+       // Dispatch to store user data including token
+       dispatch(setUser(data));  // This will set the user object in Redux state
+
       return data;
     } catch (error) {
       return rejectWithValue(
@@ -141,7 +145,7 @@ const initialState = {
   followerRequests: [],
   user: {
     userId: null,
-      
+    
   },
   profile: null,
   followers: [],  
@@ -150,24 +154,29 @@ const initialState = {
   error: null,
   successMessage : null,
   isEditingProfile: false,
+  token: null,
 
 };
 
 // Redux slice
 const userSlice = createSlice({
   name: "user",
-  initialState,
+  initialState: {
+    user: null,
+    token: null,  // Make sure token is initialized here
+  },
 
   reducers: {
-
-  
-
+      
     setUser: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload;  // Set the entire user object including token
+      state.token = action.payload.token; // Set token explicitly
     },
-
     clearUser: (state) => {
       state.user = null;
+      state.token = null;
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
 
     clearMessages(state) {
@@ -219,6 +228,7 @@ const userSlice = createSlice({
           userId: decodedToken.userId,  // Extract and store userId
           email: decodedToken.email,   // Add additional fields if needed
         };
+        state.token = action.payload.token;
         state.successMessage = "Login successful!";
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -264,8 +274,8 @@ const userSlice = createSlice({
       })
       .addCase(fetchFollowersAndFollowing.fulfilled, (state, action) => {
         state.loading = false;
-        state.followers = action.payload.followers; // Store followers
-        state.following = action.payload.following; // Store following
+        state.followers = action.payload.followers || []; // Store followers
+        state.following = action.payload.following || []; // Store following
       })
       .addCase(fetchFollowersAndFollowing.rejected, (state, action) => {
         state.loading = false;
