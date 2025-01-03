@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch  } from 'react-redux';
-import { fetchPosts } from '../redux/postSlice.js';
 import TopBar from '../home/TopBar';
+import { createPost, fetchPosts } from '../redux/postSlice';
 import ProfileCard from '../home/ProfileCard';
-import ProfilePic from '../../assets/ProfilePic.png';
-import CustomButton from '../form/CustomButton.jsx';
-import { BiImages } from "react-icons/bi";
-import { BiSolidVideo } from "react-icons/bi";
-import { BsFiletypeGif } from "react-icons/bs";
-import TextInput from '../form/TextInput';
 import { useForm } from 'react-hook-form';
 import Loading from '../form/Loading.jsx';
 import PostCard from '../home/PostCard.jsx';
 import EditProfile from '../home/EditProfile.jsx';
 import FollowRequestCard from '../home/FollowRequestCard.jsx';
 import FollowerFollowing from '../home/FollowerFollowing.jsx';
+import CreatePostForm from '../home/CreatePostForm.jsx';
 
 
 
 
 function Home() {
     const { user, edit } = useSelector((state)=> state.user);
-    const { posts, loading, error } = useSelector((state) => state.posts);
+    const { posts,  loading, error } = useSelector((state) => state.posts);
     const [file, setFile] = useState(null);
     const [posting, setPosting] = useState(false)
     const { register, handleSubmit,   formState:{errors}} = useForm({mode:"onChange"});
@@ -32,13 +27,36 @@ function Home() {
     const dispatch = useDispatch();
 
      // Fetch posts when the component mounts
-      useEffect(() => {
-        dispatch(fetchPosts());
-      }, [dispatch]);
+     useEffect(() => {
+      dispatch(fetchPosts()); 
+    }, [dispatch]);
     
-    const handlePostSubmit = async(data)=> {
-      
-    }
+    const handlePostSubmit = async (data) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('description', data.description);
+    
+      setPosting(true); 
+
+      try {
+        // Dispatch createPost thunk
+        const resultAction = await dispatch(createPost(formData));
+        if (createPost.fulfilled.match(resultAction)) {
+          // Successfully created post
+          console.log('Post created:', resultAction.payload);
+          setPosting(false);
+        } else {
+          // Handle error
+          setErrMsg(resultAction.payload.message || 'Error creating post');
+          setPosting(false);
+        }
+      } catch (error) {
+        console.error('Error uploading post:', error);
+        setErrMsg(error.message || 'An error occurred');
+        setPosting(false);
+      }
+    };
+    
 
    
   return (
@@ -56,97 +74,11 @@ function Home() {
              </div>
 
         {/* col-2 */}
-            <div className='flex-1 h-full min-h-[calc(100vh-5rem)] bg-primary px-4 flex flex-col gap-6 rounded-lg overflow-y-auto' >
+            <div className='flex-1 h-full min-h-[calc(100vh-2rem)] bg-primary px-4 flex flex-col gap-6 rounded-lg overflow-y-auto' >
                 {/* top bar in post card */}
-               <form className='bg-primary px-4 rounded-lg  ' onSubmit={handleSubmit(handlePostSubmit)}>
-                   <div className='w-full flex items-center gap-2 py-4 border-b border-[#66666645]'>
-                   <img  className='w-14 h-14 object-cover rounded-full'
-                                src={user?.profileUrl ?? ProfilePic}
-                                 alt='User Image'
-                             />
 
-                         <TextInput name="description" placeholder="What's on your mind..." type='text' 
-                        register={register('description',
-                              {
-                                required: 'Write something about post ',
-                              }
-                            )}
-                            styles='w-full rounded-full py-5'
-                            labelStyle='ml-2'
-                            error={errors.description ? errors.description.message : ""}
-                            />
-                             
-                   </div>
-                   {errMsg?.message && (
-                                <span role='alert' className={`text-sm ${
-                                  errMsg?.status == 'failed' ? 
-                                  "text-[#f64949fe]" 
-                                  : "text-[#2ba150fe]"
-                                } mt-0.5`}>
-                                  {errMsg?.message }
-                                </span>
-                              )}
-                    <div className='flex items-center justify-between py-4'>
-                        <label 
-                            htmlFor='imgUpload'
-                            className='flex items-center gap-1 text-base  text-ascent-2 hover:text-ascent-1 cursor-pointer'
-                        >
-                          <input className='hidden'
-                            type='file'
-                            id='imgUpload'
-                            data-max-size='5120'
-                            accept='.jpg, .png, .jpeg'
-                            onChange={(e)=> setFile(e.target.files[0])}
-                          />
-                            <BiImages />
-                            <span>Image</span>
-                          
-                        </label>
+                  <CreatePostForm/>
 
-                        <label 
-                            htmlFor='videoUpload'
-                            className='flex items-center gap-1 text-base  text-ascent-2 hover:text-ascent-1 cursor-pointer'
-                        >
-                          <input className='hidden'
-                            type='file'
-                            id='videoUpload'
-                            data-max-size='5120'
-                            accept='.mp4, .wav'
-                            onChange={(e)=> setFile(e.target.files[0])}
-                          />
-                            <BiSolidVideo />
-                            <span>Video</span>
-                          
-                        </label>
-                        
-                        <label 
-                            htmlFor='vgifUpload'
-                            className='flex items-center gap-1 text-base  text-ascent-2 hover:text-ascent-1 cursor-pointer'
-                        >
-                          <input className='hidden'
-                            type='file'
-                            id='vgifUpload'
-                            data-max-size='5120'
-                            accept='.gif'
-                            onChange={(e)=> setFile(e.target.files[0])}
-                          />
-                            <BsFiletypeGif />
-                            <span>Gif</span>
-                          
-                        </label>
-
-                        <div>
-                        {posting?(
-                          <Loading/>
-                        ):(
-                          <CustomButton
-                            type='submit' title='post' containerStyles= 'bg-[#0444a4] text-white py-1 px-6 rounded-full font-semibold text-sm'
-                          />
-                        )}
-                        </div>
-                    </div>
-
-                 </form>
                   {/* top bar ends here */}
 
 
@@ -167,14 +99,6 @@ function Home() {
         <div className='hidden w-1/4 h-full lg:flex flex-col gap-8'>
             {/* followRequest */}
             <div className='w-full bg-primary shadow-sm rounded-lg px-6 py-5'>
-              {/* <div className='flex items-center justify-between text-xl text-ascent-1 border-b border-[#66666645] '>
-                  <span>
-                     Follow Requests
-                  </span>
-                  <span>
-                    {followerRequest?.length}
-                  </span>
-              </div> */}
 
               <FollowerFollowing/>
 

@@ -68,10 +68,10 @@ const TopBar = () => {
    }
 
 
-const handleSearch = async(data)=>{
+// const handleSearch = async(data)=>{
 
   
-}
+// }
 
   return (
     <div className='topbar w-full flex items-center justify-between py-3  md:py-6 px-4 bg-primary  ' >
@@ -91,7 +91,7 @@ const handleSearch = async(data)=>{
                 Explore People
               </button>
 
-           <form className='hidden md:flex items-center justify-center' onSubmit={handleSubmit(handleSearch)}>
+           {/* <form className='hidden md:flex items-center justify-center' onSubmit={handleSubmit(handleSearch)}>
 
                 <TextInput
                 placeholder='Search'
@@ -105,13 +105,13 @@ const handleSearch = async(data)=>{
                containerStyles='bg-[#0444a4] text-white px-6 py-2.5 mt-1 rounded-r-full'
             />
 
-           </form>
+           </form> */}
 
            <div className='flex gap-4 items-center text-ascent-1 text-md md:text-xl'>
               <button onClick={()=> handleTheme()}>{theme === 'light' ? <FaMoon /> : <IoSunnySharp /> }</button>
-              <div className='hidden lg:flex'>
+              {/* <div className='hidden lg:flex'>
               <IoMdNotifications />
-              </div>
+              </div> */}
            </div>
 
            <CustomButton 
