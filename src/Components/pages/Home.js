@@ -17,11 +17,8 @@ import CreatePostForm from '../home/CreatePostForm.jsx';
 function Home() {
     const { user, edit } = useSelector((state)=> state.user);
     const { posts,  loading, error } = useSelector((state) => state.posts);
-    const [file, setFile] = useState(null);
-    const [posting, setPosting] = useState(false)
     const { register, handleSubmit,   formState:{errors}} = useForm({mode:"onChange"});
-    const [errMsg,setErrMsg] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
      
 
     const dispatch = useDispatch();
@@ -31,31 +28,7 @@ function Home() {
       dispatch(fetchPosts()); 
     }, [dispatch]);
     
-    const handlePostSubmit = async (data) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('description', data.description);
     
-      setPosting(true); 
-
-      try {
-        // Dispatch createPost thunk
-        const resultAction = await dispatch(createPost(formData));
-        if (createPost.fulfilled.match(resultAction)) {
-          // Successfully created post
-          console.log('Post created:', resultAction.payload);
-          setPosting(false);
-        } else {
-          // Handle error
-          setErrMsg(resultAction.payload.message || 'Error creating post');
-          setPosting(false);
-        }
-      } catch (error) {
-        console.error('Error uploading post:', error);
-        setErrMsg(error.message || 'An error occurred');
-        setPosting(false);
-      }
-    };
     
 
    
@@ -67,7 +40,7 @@ function Home() {
       <div className='w-full flex gap-2 lg:gap-4 pt-5 pb-10 h-full' >
         
         {/* col-1 Profile card and Follower card*/} 
-             <div className='hidden w-1/3 lg:w:1/4 h-full md:flex flex-col gap-6 '>
+             <div className='w-1/3 lg:w-1/4 h-full md:flex flex-col gap-6 '>
                 <ProfileCard user={user}/>
 
                 <FollowRequestCard   />
