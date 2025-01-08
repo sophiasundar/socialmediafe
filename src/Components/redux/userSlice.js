@@ -138,6 +138,29 @@ export const fetchFollowersAndFollowing = createAsyncThunk(
 );
 
 
+// Async thunk for fetching messages
+export const fetchMessages = createAsyncThunk(
+  "users/fetchMessages",
+  async ({ userId, otherUserId }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return rejectWithValue("No token found");
+      }
+
+      const response = await axios.get(`${API}/api/messages/${userId}/${otherUserId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data; // Expected to be an array of messages
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+
 
 
 // Initial state
@@ -155,16 +178,13 @@ const initialState = {
   successMessage : null,
   isEditingProfile: false,
   token: null,
-
+  messages: [], 
 };
 
 // Redux slice
 const userSlice = createSlice({
   name: "user",
-  initialState: {
-    user: null,
-    token: null,  // Make sure token is initialized here
-  },
+  initialState,
 
   reducers: {
       
@@ -188,6 +208,7 @@ const userSlice = createSlice({
       state.user = null;
       localStorage.removeItem("user");
       localStorage.removeItem("token"); 
+      localStorage.removeItem("theme");
       state.successMessage = null;
     },
 
@@ -280,6 +301,18 @@ const userSlice = createSlice({
       .addCase(fetchFollowersAndFollowing.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch followers/following";
+      })
+      .addCase(fetchMessages.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMessages.fulfilled, (state, action) => {
+        state.loading = false;
+        state.messages = action.payload;
+      })
+      .addCase(fetchMessages.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
     
   },

@@ -7,6 +7,8 @@ import Home from './Components/pages/Home';
 import { useSelector } from 'react-redux';
 import ProtectedRoute from './Components/protectedRoute/protectedRoute';
 import ExploreUsers from './Components/pages/ExploreUser';
+import Chat from './Components/chat/Chat';
+
 
 
 
@@ -41,6 +43,13 @@ const App = () =>{
         <ExploreUsers />
         </ProtectedRoute>
           }></Route>
+
+<Route path='/chat' element={
+      
+       <Chat/>
+       
+          }></Route>
+
 
 
       </Routes>

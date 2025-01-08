@@ -46,25 +46,25 @@ const CreatePostForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-white shadow-lg rounded-lg ">
-      <h2 className="text-xl font-semibold mb-4 text-center">Create a Post</h2>
+    <div className="max-w-md mx-auto p-4 bg-primary  shadow-lg rounded-lg ">
+      <h2 className="text-ascent-1  bg-primary font-semibold mb-4 text-center">Create a Post</h2>
 
       {error && <p className="text-red-500 text-sm mb-4">{error.message}</p>}
 
       <form onSubmit={handleSubmit}>
         <textarea
-          className="w-full p-3 border border-gray-300 rounded-md"
+          className="w-full bg-primary p-3 border border-gray-300 rounded-md"
           placeholder="Write a description..."
           value={description}
           onChange={handleDescriptionChange}
           rows="3"
         />
 
-        <input
+        <input 
           type="file"
           onChange={handleFileChange}
           accept="image/*,video/*,image/gif"
-          className="mt-4 p-2 bg-gray-100 rounded-md"
+          className="mt-4 p-2 bg-primary text-ascent-1 rounded-md"
         />
 
         {previewUrl && (
@@ -73,7 +73,7 @@ const CreatePostForm = () => {
               <video
                 src={previewUrl}
                 controls
-                className="max-w-full h-auto rounded-md"
+                className="max-w-full bg-primary h-auto rounded-md"
               />
             ) : (
               <img

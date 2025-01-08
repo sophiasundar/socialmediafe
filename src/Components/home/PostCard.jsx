@@ -35,8 +35,13 @@ const PostCard = ({ post, onDelete, onLike}) => {
     setCommentText(""); // Clear input field after submission
   };
 
+  const handleCommentsToggle = () => {
+    setShowComments(prevShowComments => !prevShowComments);
+  };
+
   useEffect(() => {
     if (showComments ) {
+      console.log("Fetching comments for post:", post._id);
       dispatch(getComments(post._id)); // Fetch comments when the section is opened
     }
   }, [dispatch, showComments, post._id]);
@@ -97,7 +102,8 @@ const PostCard = ({ post, onDelete, onLike}) => {
       </div>
 
       {/* Post Actions */}
-      <div className="mt-4 flex justify-between items-center px-3 py-2 text-ascent-1 text-base border-t border-[#66666645]">
+      <div className="mt-4 flex justify-between items-center px-3 py-2 text-ascent-1 
+      text-base border-t border-[#66666645]">
         <p
           className="flex gap-2 items-center text-base cursor-pointer"
           onClick={handleLikeClick}
@@ -111,8 +117,8 @@ const PostCard = ({ post, onDelete, onLike}) => {
         </p>
 
         <p
-          className="flex gap-2 items-center text-base cursor-pointer"
-          onClick={() => setShowComments(!showComments)}
+          className="flex gap-2 items-center text-base text-ascent-1 bg-primary cursor-pointer"
+          onClick={handleCommentsToggle}
         >
           <BiComment size={20} />
           {post?.comments?.length || 0} Comments
@@ -129,15 +135,21 @@ const PostCard = ({ post, onDelete, onLike}) => {
         )}
       </div>
 
+
+      {/* Visual indicator for comments section */}
+      <p className="text-center text-sm text-gray-500">{showComments ? "Comments should be visible now." : "Comments are hidden."}</p>
+
      {/* Comment Section */}
      {/* {showComments && ( */}
-        <div className="mt-3">
+        <div className="mt-3 ">
+
           <div>
+          {console.log("Comments section is being rendered.")}
             {/* Comment Form */}
             <form onSubmit={handleCommentSubmit} className="flex items-center gap-2 mb-3">
               <input
                 type="text"
-                className="flex-1 p-2 border rounded-md"
+                className="flex-1 p-2 border rounded-md text-ascent-1 bg-primary"
                 placeholder="Write a comment..."
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
@@ -145,7 +157,7 @@ const PostCard = ({ post, onDelete, onLike}) => {
               <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
+              > 
                 Comment
               </button>
             </form>
@@ -160,9 +172,10 @@ const PostCard = ({ post, onDelete, onLike}) => {
                       src={comment?.commenter?.profileUrl || ProfilePic}
                       alt={`${comment?.commenter?.firstName} ${comment?.commenter?.lastName}`}
                     />
-                    <div className="bg-gray-200 p-3 rounded-lg flex-1">
-                      <p className="font-medium">{`${comment?.commenter?.firstName} ${comment?.commenter?.lastName}`}</p>
-                      <p className="text-sm text-gray-700">{comment?.commentText}</p>
+                    <div className=" p-3 rounded-lg flex-1 text-ascent-1 bg-primary">
+                      <p className="font-medium text-ascent-1 bg-primary">
+                        {`${comment?.commenter?.firstName} ${comment?.commenter?.lastName}`}</p>
+                      <p className="text-sm text-ascent-1 bg-primary">{comment?.commentText}</p>
                     </div>
                   </div>
                 ))}
@@ -174,7 +187,7 @@ const PostCard = ({ post, onDelete, onLike}) => {
 
 
       </div>
-    {/* )}  */}
+     {/* )}   */}
     </div>
   );
 };

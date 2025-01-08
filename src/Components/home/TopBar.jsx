@@ -91,6 +91,13 @@ const TopBar = () => {
                 Explore People
               </button>
 
+              <button
+                onClick={() => navigate('/chat')}
+                className='hidden md:flex bg-[#0444a4] text-white px-4 py-2 rounded-full mr-4'
+              >
+                Chat 
+              </button>
+
            {/* <form className='hidden md:flex items-center justify-center' onSubmit={handleSubmit(handleSearch)}>
 
                 <TextInput
